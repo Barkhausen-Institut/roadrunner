@@ -1,0 +1,35 @@
+#very simple test if comilation works
+simple:
+  tool: Slang
+  sv: src/sim.sv
+  toplevel: SimTest
+
+#test compiler flags
+compileFlags:
+  tool: Slang
+  flags: MYFLAG
+  sv:
+    /SLANG and MYFLAG: src/sim.sv
+  toplevel: SimTest
+
+#test if sv files are separated into compile units
+sepCompileUnit:
+  tool: Slang
+  sv: src/top.sv
+  toplevel: SimTest
+  inc:
+    -
+      sv: src/mod1.sv
+      define: MOD1
+    -
+      sv: src/mod2.sv
+      define: MOD2
+
+#test inlcude paths as files and as directories
+includes:
+  tool: Slang
+  sv: src/sim_inc.sv
+  path:
+    - src/values.svh #file
+    - header #directory
+  toplevel: SimTest

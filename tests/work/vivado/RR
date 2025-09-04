@@ -1,0 +1,52 @@
+sim:
+  tool: Vivado.sim
+  sv : sim.sv
+  toplevel: SimTest
+
+simFail:
+  tool: Vivado.sim
+  sv: sim_fail.sv
+  toplevel: SimTest
+
+simIgnoreFail:
+  tool: Vivado.sim
+  sv: sim_fail.sv
+  check: false
+  toplevel: SimTest
+
+compile:
+  tool: Vivado.xcompile
+  sv: sim.sv
+  options: use_glbl
+  toplevel: SimTest
+  result: sim
+
+xsim:
+  tool: Vivado.xsim
+  using: ~sim
+
+compileFlags:
+  tool: Vivado.sim
+  flags: MYFLAG
+  sv:
+    /DPI and XILINX and SIMULATION and VIVADO and MYFLAG: sim.sv
+  toplevel: SimTest
+
+ipGen: +#serdes.RR
+
+synth:
+  tool: Vivado.synth
+  part: xczu7ev-ffvc1156-2-e
+  board: xilinx.com:zcu106:part0:2.6
+  toplevel: blinky_top
+  v:
+    - blinky_top.v
+    - blinky.v
+  constraints:
+    -
+      file: blinky.xdc
+      options: notSynth
+  xilinxFeatures: useXPMMem
+  options: flag1
+
+synth2: =;synth+flag1#42

@@ -1,0 +1,23 @@
+////    ////////////
+////    ////////////
+////
+////
+////////////    ////
+////////////    ////
+////    ////    ////
+////    ////    ////
+////////////
+////////////
+
+module SimTest();
+
+import RREnv::*;
+
+initial $display("Hallo Welt!\n");
+
+initial begin
+    RRFail();
+    $fatal(1);
+end
+
+endmodule

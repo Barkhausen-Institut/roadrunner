@@ -1,0 +1,8 @@
+bird: kea
+things:
+  - drill
+  - hammer
+  - saw
+thing: =;things.2
+source: code.c
+

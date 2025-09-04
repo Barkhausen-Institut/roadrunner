@@ -1,0 +1,12 @@
+vars:
+  foo: bar
+  prime: 17
+  link: =:mod.sub
+
+mod:
+  sub:
+    monkey: mandrill
+
+test: Hallo <$foo$> <$prime$>
+test2: $$return foo
+test3: Hallo <$link$>

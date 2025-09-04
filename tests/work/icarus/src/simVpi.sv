@@ -1,0 +1,22 @@
+////    ////////////
+////    ////////////
+////
+////
+////////////    ////
+////////////    ////
+////    ////    ////
+////    ////    ////
+////////////
+////////////
+
+module SimTest();
+
+import RREnv::*;
+
+initial $VPIGreeting();
+
+initial begin
+    #100 $VPISuccess();
+end
+
+endmodule

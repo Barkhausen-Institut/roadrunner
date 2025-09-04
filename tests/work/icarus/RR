@@ -1,0 +1,77 @@
+#very simple test if simulation invokation works
+sim:
+  tool: Icarus
+  sv: src/sim.sv
+  toplevel: SimTest
+
+#test if a simulation can fail by emitting a message in sim log
+simFail:
+  tool: Icarus
+  sv: src/sim_fail.sv
+  toplevel: SimTest
+
+#test if an error int he log can be ignored
+simIgnoreFail:
+  tool: Icarus
+  sv: src/sim_fail.sv
+  check: false
+  toplevel: SimTest
+
+#test if the compile subcommand works
+compile:
+  tool: Icarus.compile
+  sv: src/sim.sv
+  toplevel: SimTest
+
+xsim:
+  tool: Icarus.sim
+  sim: =;compile$result
+
+#test compiler flags
+compileFlags:
+  tool: Icarus
+  flags: MYFLAG
+  sv:
+    /VPI and ICARUS and SIMULATION and MYFLAG: src/sim.sv
+  toplevel: SimTest
+
+#test if sv files are separated into compile units
+sepCompileUnit:
+  tool: Icarus
+  sv: src/top.sv
+  toplevel: SimTest
+  inc:
+    -
+      sv: src/mod1.sv
+      define: MOD1
+    -
+      sv: src/mod2.sv
+      define: MOD2
+
+#test if the vpi interface is working
+vpi:
+  tool: Icarus
+  sv: src/simVpi.sv
+  toplevel: SimTest
+  inc:
+    - =;greeter
+    - =;retval
+    - =;greeter # check if greeter.cc is compiled only once - can only be done by hand
+    
+greeter:
+  vpiModule:
+    startup: registerCalls
+    c: src/greeter.cc
+retval:
+  vpiModule:
+    startup: registerCalls
+    c: src/retval.cc
+
+#test inlcude paths as files and as directories
+sim_inc:
+  tool: Icarus
+  sv: src/sim_inc.sv
+  path:
+    - src/values.svh #file
+    - header #directory
+  toplevel: SimTest

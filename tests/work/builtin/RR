@@ -1,0 +1,135 @@
+#value
+monkey: mandrill
+number: 42
+somefile: somefile.txt
+hook: The Jabberwocky says <%-wocky%>
+
+#import
+sub: +sub
+
+#command execution
+jubjub:
+  tool: BuiltIn.jabberwocky
+  fail:
+    /fail: True
+    /true: False
+  noret:
+    /noret: True
+    /true: False
+jubjub_noret: =..jubjub+noret
+jubjub_fail: =..jubjub+fail
+
+makeResult:
+  tool: Shell
+  script: |
+    echo "target: 93" > RR
+  export:
+    pattern: RR
+
+indirect1: =;makeResult
+indirect2: =;indirect1
+
+useResult:
+  tool: Shell
+  script: |
+    echo "number: $number"
+  env:
+    number: =;makeResult$result.target
+
+parallel:
+  tool: parallel
+  cmd1:
+    tool: Shell
+    script: |
+      echo "wait" > message
+      sleep 1
+      echo "Hallo" > message
+      sleep 2
+      echo "too late" > message
+    expose: message
+  cmd2:
+    tool: Shell
+    script: |
+      sleep 2
+      if [[ "Hallo" == `cat message` ]]; then
+        exit 0
+      else
+        exit 1
+      fi
+    discover: message
+
+sequence:
+  tool: sequence
+  cmd1:
+    tool: Shell
+    script: |
+      echo "wait..." > message
+      sleep 3
+      echo "Hallo" > message
+    expose: message
+  cmd2:
+    tool: Shell
+    script: |
+      sleep 1
+      if [[ "Hallo" == `cat message` ]]; then
+        exit 0
+      else
+        exit 1
+      fi
+    discover: message
+
+dynamic:
+  vars:
+    task: =...task
+  task:
+    tool: Shell
+    script: |
+      echo "task $num -- branch $branch"
+    env:
+      num:
+        /one: one
+        /two: two
+        /default: NA
+      branch:
+        /branch1: one
+        /branch2: two
+        /default: NA
+  merge:
+    tool: parallel
+    branch1:
+      tool: parallel
+      taskOne: =$task+one+branch1
+      taskTwo: =$task+two+branch1
+    branch2:
+      tool: parallel
+      taskOne: =$task+one+branch2
+      taskTwo: =$task+two+branch2
+
+paramTask:
+  tool: Shell
+  script: |
+    echo "parameter par:<%-par%>"
+  options: par
+
+hooksTest:
+  tool: Shell
+  script: |
+    echo "wocky: <%-wocky%>"
+    echo "getter: <%-get("..blub")%>"
+    echo "num: <%- get("..number")+3 %>"
+  blub: foo
+  number: 17
+
+reactiveResult:
+  tool: Shell
+  export:
+   - pattern: RR
+  script: |
+    cat <<EOF > RR
+    cmd:
+      tool: Shell
+      script: |
+        echo "Hallo Welt"
+
+cmdFromResult: =;reactiveResult$result.cmd
+

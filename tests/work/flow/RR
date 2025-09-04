@@ -1,0 +1,102 @@
+simple:
+  tool: Flow
+  script: |
+    print("Hello World")
+    a = task("first", "..runner")
+    b = create("second", "..runner2")
+    depend(a, b)
+    release(b)
+    return 0
+
+runner:
+  tool: Shell
+  script: |
+    echo "Runner Script Start"
+    sleep 1
+    echo "Runner Script End"
+
+runner2:
+  tool: Shell
+  script: |
+    echo "Runner Script 2 Start"
+    sleep 1
+    echo "Runner Script 2 End"
+
+printnum:
+  tool: Flow
+  script: |
+    task("first", ";print1")
+    task("second", ";print2")
+    return 0
+  
+printnumber:
+  tool: Shell
+  options: ['one', 'two']
+  script: |
+    echo "The number is:$num" > msg
+  export:
+    pattern: msg
+  env:
+    num:
+      /one: 1
+      /two: 2
+      /default: 1000
+
+print1: =;printnumber+one
+print2: =;printnumber+two
+
+guess:
+  tool: Flow
+  script: |
+    lo = 0
+    hi = 1000
+    while hi - lo > 1 do
+      mid = (hi + lo) // 2
+      t = task("guess" .. mid, ";isBigger+num~" .. mid)
+      wait(t)
+      s = status(t)
+      if s.returnCode == 0 then
+        print("small")
+        lo = mid
+      else
+        print("big")
+        hi = mid
+      end
+    end
+    print("number is:" .. mid)
+    return 0
+    
+
+isBigger:
+  tool: Shell
+  script: |
+    if [ "$num" -gt "137" ]; then
+      exit 1
+    else
+      exit 0
+    fi
+  env:
+    num: <%-num%>
+
+square:
+  tool: Shell
+  script: |
+    echo $num*$num > product
+  env:
+    num: <%-num%>
+  export:
+    pattern: product
+  options:
+    - num
+
+lists:
+  tool: Flow.pool
+  #sq1:
+  #  tool: Flow.sequence
+  #  sq1: =;square+num#1
+  #  sq2: =;square+num#2
+  sq2: =;square+num~3
+  sq3: =;square+num~4
+  sq4: =;square+num~5
+
+    

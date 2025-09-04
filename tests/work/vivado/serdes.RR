@@ -1,0 +1,63 @@
+simple:
+  tool: Vivado.ip
+  name: SerDesXil
+  part: xcu250-figd2104-2L-e
+  typ: xilinx.com:ip:gtwizard_ultrascale:1.7
+  properties:
+    CONFIG:
+      PRESET: GTY-Aurora_8B10B
+      CHANNEL_ENABLE: "X1Y16 X1Y17"
+      RX_REFCLK_SOURCE: ""
+      TX_REFCLK_SOURCE: ""
+  libs:
+    - unisim
+    - unisims_ver
+
+vcu118:
+  tool: Vivado.ip
+  name: SerDesXil
+  part: xcvu9p-flga2104-2L-e
+  typ: xilinx.com:ip:gtwizard_ultrascale:1.7
+  properties:
+    CONFIG:
+      PRESET: GTY-Aurora_8B10B
+      CHANNEL_ENABLE: "X0Y5 X0Y4"
+      RX_REFCLK_SOURCE: ""
+      TX_REFCLK_SOURCE: ""
+
+vhdl:
+  tool: Vivado.ip
+  name: SerDesXil
+  part: xcvu9p-flga2104-2L-e
+  typ: xilinx.com:ip:gtwizard_ultrascale:1.7
+  properties:
+    CONFIG:
+      PRESET: GTY-Aurora_8B10B
+      CHANNEL_ENABLE: "X0Y5 X0Y4"
+      RX_REFCLK_SOURCE: ""
+      TX_REFCLK_SOURCE: ""
+
+gigeth:
+  tool: Vivado.ip
+  name: gig_ethernet_pcs_pma_xcvu9p
+  part: xcvu9p-flga2104-2L-e
+  board: xilinx.com:vcu118:part0:2.3
+  typ: xilinx.com:ip:gig_ethernet_pcs_pma:16.*
+  properties:
+    CONFIG.Standard: SGMII
+    CONFIG.Physical_Interface: LVDS
+    CONFIG.Management_Interface: false
+    CONFIG.SupportLevel: Include_Shared_Logic_in_Core
+    CONFIG.LvdsRefClk: 625
+    CONFIG.TxLane0_Placement: DIFF_PAIR_2
+    CONFIG.RxLane0_Placement: DIFF_PAIR_0
+    CONFIG.Tx_In_Upper_Nibble: 0
+  libs:
+    - unisim
+    - unisims_ver
+  options: use_glbl
+
+compile_gigeth:
+  tool: Vivado.xcompile
+  inc: =;gigeth$result.top
+  toplevel: gig_ethernet_pcs_pma_xcvu9p

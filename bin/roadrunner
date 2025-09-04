@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+
+import roadrunner.run
+
+ret = roadrunner.run.main()
+exit(ret)

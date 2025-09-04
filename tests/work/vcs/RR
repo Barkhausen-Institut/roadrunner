@@ -1,0 +1,80 @@
+sim:
+  tool: VCS.sim
+  sv: src/sim.sv
+  toplevel: SimTest
+
+simGui:
+  tool: VCS.sim
+  sv: src/sim.sv
+  toplevel: SimTest
+  gui: true
+
+simFail:
+  tool: VCS.sim
+  sv: src/sim_fail.sv
+  toplevel: SimTest
+
+simIgnoreFail:
+  tool: VCS.sim
+  sv: src/sim_fail.sv
+  check: false
+  toplevel: SimTest
+
+sim_inc:
+  tool: VCS.sim
+  sv: src/sim_inc.sv
+  path:
+    - src/values.svh #file
+    - header #directory
+  toplevel: SimTest
+
+sepCompileUnit:
+  tool: VCS.sim
+  sv: src/top.sv
+  toplevel: SimTest
+  inc:
+    -
+      sv: src/mod1.sv
+      define: MOD1=1
+    -
+      sv: src/mod2.sv
+      define: MOD2=2
+
+#test if the vpi interface is working
+vpi:
+  tool: VCS.sim
+  sv: src/simVpi.sv
+  toplevel: SimTest
+  inc:
+    - =;greeter
+    - =;retval
+    - =;greeter # check if greeter.cc is compiled only once - can only be done by hand
+greeter:
+  vpiModule:
+    startup: registerCalls
+    c: src/greeter.cc
+retval:
+  vpiModule:
+    startup: registerCalls
+    c: src/retval.cc
+
+#test that if a file is included twice no invalid vlogan call is gnerated
+doubleinc:
+  tool: VCS.sim
+  sv: src/sim.sv
+  inc:
+    - sv: src/mod1.sv
+    - sv: src/mod1.sv
+  toplevel: SimTest
+
+waves_fsdb:
+  tool: VCS.sim
+  sv: src/simWaves.sv
+  waves: fsdb
+  toplevel: SimTest
+
+waves_vcd:
+  tool: VCS.sim
+  sv: src/simWaves.sv
+  waves: vcd
+  toplevel: SimTest

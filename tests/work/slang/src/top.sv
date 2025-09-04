@@ -1,0 +1,25 @@
+////    ////////////
+////    ////////////
+////
+////
+////////////    ////
+////////////    ////
+////    ////    ////
+////    ////    ////
+////////////
+////////////
+
+`timescale 1ps/1ps
+
+module SimTest();
+
+import RREnv::*;
+
+
+mod1 first ();
+
+mod2 second ();
+
+initial #1 RRSuccess();
+
+endmodule

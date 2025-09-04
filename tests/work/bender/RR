@@ -1,0 +1,35 @@
+import:
+  tool: Bender
+  #result: deps
+  benderDir: =;checkout$result.dir
+  local: hw
+
+importDir:
+  tool: Bender
+  #result: deps2
+  benderDir: =;checkout2$result.dir
+  local: hw
+
+importTarget:
+  tool: Bender
+  #result: deps3
+  benderDir: =;checkout$result.dir
+  local: hw
+  target: floo_test
+
+checkout:
+  tool: Shell:git
+  script: |
+    git clone https://github.com/pulp-platform/FlooNoC.git
+    echo "dir: '.'" > result/RR
+  export:
+    pattern: "*"
+    base: FlooNoC
+
+checkout2:
+  tool: Shell:git
+  script: |
+    git clone https://github.com/pulp-platform/FlooNoC.git
+    echo "dir: 'FlooNoC'" > result/RR
+  export:
+    pattern: "FlooNoC"

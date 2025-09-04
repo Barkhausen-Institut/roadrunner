@@ -1,0 +1,12 @@
+some:
+  node: hello
+  node2: world
+  now: datetime
+  foo:
+    bar:
+      wheel:
+        one: eins
+        two: zwei
+        three:
+          thirty: 33
+          fourty: 43

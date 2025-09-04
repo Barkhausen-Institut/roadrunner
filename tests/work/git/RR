@@ -1,0 +1,20 @@
+simple:
+  tool: Git
+  repo: https://gitlab.barkhauseninstitut.org/mattis.hasler/roadrunner.git
+
+branch:
+  tool: Git
+  repo: https://gitlab.barkhauseninstitut.org/mattis.hasler/roadrunner.git
+  branch: v3
+
+config:
+  tool: Git
+  repo: https://gitlab.barkhauseninstitut.org/mattis.hasler/roadrunner.git
+  config: example.RR
+
+sub: ++
+
+config2:
+  tool: Git
+  repo: https://gitlab.barkhauseninstitut.org/mattis.hasler/roadrunner.git
+  config: =;sub.config

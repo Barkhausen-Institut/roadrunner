@@ -1,0 +1,19 @@
+inline:
+  tool: Shell
+  script: |
+    echo "Hallo Welt!"
+    
+simple:
+  tool: Shell.stages
+  stages:
+    one:
+      script: echo "this is script one"
+    two:
+      script: echo "this is script two"
+      enable: false
+    three:
+      script: echo "this is script three"
+      after: one
+    four:
+      script: echo "this is script four"
+      before: two

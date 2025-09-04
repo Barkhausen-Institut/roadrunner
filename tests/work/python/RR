@@ -1,0 +1,96 @@
+inline:
+  tool: Python
+  script: |
+    with open("message", "w") as fh:
+        print(f"Hallo Welt!", file=fh)
+
+script:
+  tool: Python
+  scriptFile: hallo.py
+
+scriptArgs:
+  tool: Python
+  scriptFile: hallo.py
+  args:
+    - "User"
+
+files:
+  tool: Python
+  scriptFile: files.py
+  env:
+    animal: Mandrill
+  files:
+    template: greet
+
+curses:
+  tool: Python
+  interactive: true
+  scriptFile: ui.py
+
+returnValue:
+  tool: Python
+  script: |
+    import rrenv
+    if rrenv.good:
+      exit(0)
+    else:
+      exit(12)
+  env:
+    good:
+      /fail: False
+      /default: True
+
+returnFail: =;returnValue+fail
+
+defaultFlags:
+  tool: Python
+  script: |
+    import rrenv
+    if rrenv.number == 19:
+      exit(0)
+    else:
+      exit(1)
+  env:
+    number:
+      /Python: 19
+      /default: 42
+
+moduleFile:
+  tool: Python
+  script: |
+    import myModule
+    import mod2
+    print(f"Module loaded: {myModule.__file__}")
+    print(f"Module loaded: {mod2.__file__}")
+  inc:
+    - pymod:
+        - myModule.py
+        - mod/mod2.py
+
+moduleDir:
+  tool: Python
+  script: |
+    from mod import mod3, mod2
+    from mod4 import mod5
+    print(f"Module loaded: {mod3.__file__}")
+    print(f"Module loaded: {mod2.__file__}")
+    print(f"Module loaded: {mod5.__file__}")
+  inc:
+    - pymod: mod/
+    - =;subModule.pyModule
+
+subModule: ++
+
+envVars:
+  tool: Python
+  script: |
+    import sys
+    arg1 = sys.argv[1]
+    print(f"arg1: {arg1}")
+    if int(arg1) != 5:
+      exit(1)
+    else:
+      exit(0)
+  args: [" $MYVAR"] #leading space to prevent the string be interpreted as lua expression
+  env:
+    MYVAR: 5

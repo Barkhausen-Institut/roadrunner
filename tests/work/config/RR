@@ -1,0 +1,9 @@
+#value
+monkey: mandrill
+
+#import
+sub: +sub
+sub2: ++
+cnf: +#cnf.yaml
+
+

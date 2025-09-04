@@ -1,0 +1,10 @@
+test:
+  tool: Shell:rrToolTest
+  script: |
+    cowsay "Hello, World!"
+
+pyTest:
+   tool: Python:rrToolTest
+   script: |
+     import art
+     art.tprint("Hello, World!")
