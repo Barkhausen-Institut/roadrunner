@@ -13,7 +13,10 @@
         roadrunner = pkgs.callPackage ./roadrunner.nix {};
       in
       {
-        devShell = pkgs.callPackage ./shell.nix { }; 
+        devShells = {
+          default = pkgs.callPackage ./shell.nix { };
+          pypi = pkgs.callPackage ./pypi.nix { };
+        };
         packages = {
           roadrunner = roadrunner;
           default = roadrunner;
