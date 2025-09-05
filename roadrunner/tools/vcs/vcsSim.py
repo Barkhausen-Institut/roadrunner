@@ -167,6 +167,7 @@ def do_elab(cfg:ConfigContext, wd:Path, vs:str, pipe:Pipeline):
     call = Call(wd, "elab", tool=common.NAME, version=vs)
     call.addArgs(['vcs'])
     call.addArgs(['-full64'])
+    # when adding vpi libs at compile time, vcs will load the libs and if they do weird stuff like starting threads, elaboration will fail
     if len(vpi):
         call.addArgs(['+vpi'])
         for so,fn in vpi:

@@ -47,6 +47,7 @@ class Proc(object):
         self.tStdout = tail in ['stdout', 'both']
         self.phStdout = None    #process file handles
         self.phStderr = None
+        self.popen = None
         if interactive:
             #save terminal state
             fn = sys.stdin.fileno()
@@ -74,7 +75,7 @@ class Proc(object):
         self.intEvent = threading.Event()
 
     def __del__(self):
-        if self.popen.returncode is None:
+        if self.popen is not None and self.popen.returncode is None:
             self.log.error("SubProcess was not terminated - please investigate")
         #restore term
         if self.interactive:
