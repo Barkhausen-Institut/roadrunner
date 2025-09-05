@@ -25,10 +25,5 @@ PLI_INT32 printGreeting(PLI_BYTE8 *) {
 
 void registerCalls(void) {
     registerCall(printGreeting, "$VPIGreeting");
+    printf("Registered VPIGreeting\n");
 }
-
-voidfn * vlog_startup_routines[] = {
-    registerCalls,
-    0
-};
-

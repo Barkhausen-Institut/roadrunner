@@ -25,10 +25,6 @@ PLI_INT32 printSuccess(PLI_BYTE8 *) {
 
 void registerCalls(void) {
     registerCall(printSuccess, "$VPISuccess");
+    printf("Registered VPISuccess\n");
 }
-
-voidfn * vlog_startup_routines[] = {
-    registerCalls,
-    0
-};
 
