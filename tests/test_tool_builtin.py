@@ -206,4 +206,16 @@ class TestCommandRunner(unittest.TestCase):
             fpath = (utr.tmp / f"rrun/cmds/paramTask+par~12/script.stdout")
             self.assertEqual(fpath.read_text(), f"parameter par:12\n") 
 
+    def test_parallel_option(self):
+        """test that parallel commands honor options"""
+        with run.UnitTestRunner(dir=self.PATH) as utr:
+            ret = utr.main(['invoke', 'options'])
+            self.assertEqual(ret, 0)
+            ret = utr.main(['invoke', 'options+flying'])
+            self.assertEqual(ret, 0)
+            fpath = (utr.tmp / f"rrun/cmds/options/cmd1/script.stdout")
+            self.assertEqual(fpath.read_text(), f"Hallo orang utan\n") 
+            fpath = (utr.tmp / f"rrun/cmds/options+flying/cmd1/script.stdout")
+            self.assertEqual(fpath.read_text(), f"Hallo kea\n") 
+
         

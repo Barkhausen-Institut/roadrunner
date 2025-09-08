@@ -105,6 +105,20 @@ dynamic:
       taskOne: =$task+one+branch2
       taskTwo: =$task+two+branch2
 
+options:
+  tool: parallel
+  options: flying
+  cmd1:
+    tool: Shell
+    env:
+      animal:
+        /flying: kea
+        /default: orang utan
+    script: |
+      echo "Hallo $animal"
+
+optionsFly: =;options+flying
+
 paramTask:
   tool: Shell
   script: |

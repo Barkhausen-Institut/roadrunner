@@ -485,7 +485,7 @@ def scan(cfg:ConfigContext, pipe:Pipeline, name:str, level=1):
     count = 0
     for key,node in cfg:
         #ignore magic
-        if key in ['group', 'tool']:
+        if key in ['group', 'tool', 'options']:
             continue
         scan(node, pipe, key, level+1) #f"{count}{key}")
         count += 1
