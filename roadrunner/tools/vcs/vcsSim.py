@@ -174,6 +174,7 @@ def do_elab(cfg:ConfigContext, wd:Path, vs:str, pipe:Pipeline):
             call.addArgs(["-load", f"./{so}:{fn}"])
     call.addArgs(['-kdb'])          #needed for verdi?
     call.addArgs(['-debug_access+r'])
+    call.addArgs(['-debug_access+f']) #needed for VPI vpi_put_value
     #if usevcd or usefsdb:
     #    call.addArgs(['-debug_region=cell+encrypt']) #replacement for +memcbk +vcsd
     #    call.addArgs(['-sverilog', '+vpi', '+plusarg_save', '+vcs+dumparrays'])

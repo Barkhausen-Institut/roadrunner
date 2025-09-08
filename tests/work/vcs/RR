@@ -58,6 +58,14 @@ retval:
     startup: registerCalls
     c: src/retval.cc
 
+vpiArgs:
+  tool: VCS.sim
+  sv: src/simVpiArgs.sv
+  toplevel: SimTest
+  vpiModule:
+    startup: registerCalls
+    c: src/args.cc
+
 #test that if a file is included twice no invalid vlogan call is gnerated
 doubleinc:
   tool: VCS.sim
