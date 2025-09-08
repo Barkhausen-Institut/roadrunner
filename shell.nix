@@ -1,4 +1,4 @@
-{ python310, lua, pkg-config, mkShell }:
+{ python310, lua, pkg-config, mkShellNoCC }:
 let
   pypkg = python-packages: with python-packages; [
     pyyaml
@@ -8,14 +8,14 @@ let
     pytest
   ]; 
   py = python310.withPackages pypkg;
-in mkShell {
+in mkShellNoCC {
   packages = [
     py
     lua
   ];
-  nativeBuildInputs = [
-      pkg-config
-  ];
+  #nativeBuildInputs = [
+  #    pkg-config
+  #];
   shellHook = ''
     export PATH=$PATH:$PWD/bin
     export PYTHONPATH=$PWD

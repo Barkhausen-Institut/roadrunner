@@ -1237,7 +1237,7 @@ class Option:
             try:
                 value = lua.run(snip)
             except LuaError:
-                raise OptionError("option string cannot be parsed")
+                raise OptionError(f"option string cannot be parsed:{raw}")
             etype((value, (int, float)))
         return Option(key, value)
 
