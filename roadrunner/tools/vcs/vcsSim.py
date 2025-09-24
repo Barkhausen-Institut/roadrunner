@@ -204,7 +204,8 @@ def do_sim(cfg:ConfigContext, wd:Path, vs:str, pipe:Pipeline, vars:dict):
     if usefsdb:
         with open(wd / "ucli.tcl", "w") as fh:
             print("dump -file waves.fsdb -type FSDB", file=fh)
-            print("dump -add . -fsdb_opt +struct", file=fh)
+            print("dump -add . -fsdb_opt +mda+packedmda+struct", file=fh)
+            print("onbreak {exit}", file=fh)
             print("run", file=fh)
 
     call = Call(wd, 'vcsSim', tool=common.NAME, version=vs)

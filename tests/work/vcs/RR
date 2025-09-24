@@ -28,6 +28,12 @@ sim_inc:
     - header #directory
   toplevel: SimTest
 
+sim_infinite:
+  tool: VCS.sim
+  sv: src/sim_infinite.sv
+  toplevel: SimTest
+  waves: vcd
+
 sepCompileUnit:
   tool: VCS.sim
   sv: src/top.sv
