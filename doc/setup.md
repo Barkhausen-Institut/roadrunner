@@ -76,8 +76,86 @@ Nevertheless we will share some setups that have work for us in the past and may
 
 ### Nix
 
+Nix can be used to prepare an environment to contain certain software.
+in this example the created environment is assured to have git available
+
+```ini
+[Shell:git]
+exec = #!/usr/bin/env -S nix shell nixpkgs#git --command bash\nsource $@
+```
+
+Unrolled to a file, the environment script look like this
+
+```bash
+#!/usr/bin/env -S nix shell nixpkgs#git --command bash
+source $@
+```
+
 ### VEnv
+
+For Python programs it is often usefull to have dedicated VEnvs that contain all the libraries needed. This example created an environment that will use the python executable from a VEnv located at `/opt/VEnv/floogen`:
+
+```ini
+[Python3:floogen]
+script = #!/usr/bin/env bash\nPATH=/opt/VEnv/floogen/bin:$PATH\nsource $@
+```
 
 ### Environment Modules / lmod
 
+Many setups using comercial software are using Environment or Lmod as environment manager.
+The trouble with these both is that they are designed to work on interactive shells.
+To make then work in scripts can differ a bit depending on the setup, however here is one example that worked somewhere:
+
+```ini
+[Vivado]
+exec = #!/bin/bash\neval `$LMOD_CMD sh load Vivado`\nsource $@
+```
+
+The gist is that the `module` command that a user normaly runs ist actually a shell function that may not be available in script environments.
+
 ### Container
+
+Roadrunners tool loading allows for mor sophisticated setups.
+In this example we assume a machine that cannot run Synopsys VCS, beacause it runs Ubuntu which is not supported.
+qFurther the tool is available from a NFS share mounted to the machine.
+There is a contrainer image based on RockyLinux that is capable of running the tool.
+The the configuration could be something like this
+
+```ini
+[VCS]
+execFile = /home/mattis/.config/roadrunner/VCSEnv.sh
+```
+In `config.ini` we just link the file containing the script.
+Global paths are necessary here because Pythons `ConfigParser` is unable to tell from which file an option comes.
+
+```bash
+#!/usr/bin/env bash
+cat <<EOT > container.run
+#!/usr/bin/bash
+module add Synopsys/VCS
+module add Synopsys/Verdi
+cd /WD
+source $1
+EOT
+chmod a+x container.run
+docker run --rm -it -e DISPLAY \
+-v /tmp/.X11-unix:/tmp/.X11-unix \
+-v /opt/bi/hpc:/opt/bi/hpc:ro \
+-v ./:/WD \
+--user `id -u`:`id -g` \
+meeseeks \
+/WD/container.run $1
+```
+
+At runtime the script is copied into a working directory, so you cannot reference anything with relative paths.
+This script first writes a file `container.run` which will be given to the container to execute.
+In this script `module` is used to load `VCS` and `Verdi`.
+It then switches to the working directory at `/WD` and executes the script given as param `$1`.
+
+Then a docker container is started using the images `meeseeks`.
+The NFS mounted software directory is mounted `-v /opt/bi/hpc:/opt/bi/hpc:ro`.
+To support X11 windows, `-e DISPLY` is set and `-v /tmp/.X11-unix:/tmp/.X11-unix` is mounted.
+Finally, the current directory, which is the working directory is mounted `-v ./:/WD` and the uid and gid are set to the current user ``--user `id -u`:`id -g` ``.
+Beacause of the way Roadrunner prepares working directories for tools, the docker container now has everything to run VCS.
+
+
