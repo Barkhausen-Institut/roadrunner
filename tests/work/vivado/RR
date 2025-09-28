@@ -23,7 +23,7 @@ compile:
 
 xsim:
   tool: Vivado.xsim
-  using: ~sim
+  snapshot: =;compile$result.snapshot
 
 compileFlags:
   tool: Vivado.sim
@@ -50,3 +50,26 @@ synth:
   options: flag1
 
 synth2: =;synth+flag1#42
+
+#test if the vpi interface is working
+dpi:
+  tool: Vivado.sim
+  sv: simDpi.sv
+  toplevel: SimTest
+  inc:
+    - =;greeter
+    - =;retval
+greeter:
+  c: greeter.cc
+retval:
+  c: retval.cc
+
+
+test:
+  tool: Flow.pool
+  sim: =;sim
+  simIgnoreFail: =;simIgnoreFail
+  twopart:
+    tool: Flow.sequence
+    compile: =;compile
+    xsim: =;xsim

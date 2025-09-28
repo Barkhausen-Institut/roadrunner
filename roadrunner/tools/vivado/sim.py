@@ -89,7 +89,7 @@ def cmd_xcompile(cfg:ConfigContext, pipe:Pipeline, vrsn:str):
         do_elab(fcfg, wd, pipe)
 
         pipe.result()
-        pipe.export("xsim.dir")
+        pipe.export("xsim.dir", group="snapshot")
 
     log.info(banner("/Vivado Simulation", False))
     return 0
@@ -113,12 +113,13 @@ def cmd_xsim(cfg:ConfigContext, pipe:Pipeline, vrsn:str):
     check = fcfg.get(".check", default=True, isType=bool)
     vars = roadrunner.modules.files.handleFiles(fcfg, wd, pipe)
 
-    result = fcfg.get(".using.files", isOsPath=True)
+    result = fcfg.get(".snapshot", isOsPath=True)
     workdir_import(wd, result, targetDir=Path("."))
 
-    do_sim(fcfg, wd, vrsn, pipe, vars)
-    if check:
-        do_check(wd, vrsn, pipe)
+    with pipe.inSequence(common.NAME):
+        do_sim(fcfg, wd, vrsn, pipe, vars)
+        if check:
+            do_check(wd, vrsn, pipe)
 
     log.info(banner("/Vivado Simulation"))
     return 0
@@ -128,7 +129,7 @@ HelpItem("function", (common.NAME, "do_compile"), "run xvlog", [
     HelpProxy("function", (common.NAME, "do_verilogFiles"))
 ])
 def do_compile(cfg:ConfigContext, wd:Path, vs:str, pipe:Pipeline, vars):
-    etype((cfg,ConfigContext), (wd,Path), (vs,str), (pipe,Pipeline))
+    etype((cfg,ConfigContext), (wd,Path), (vs,(str,None)), (pipe,Pipeline))
     log = logging.getLogger(LOGNAME)
 
     #files, env
@@ -246,8 +247,8 @@ def do_vhdlFiles(cfg:ConfigContext, wd:Path, pipe:Pipeline, addFiles:list[Path]=
 HelpItem("function", (common.NAME, "do_dpi"), "run xsc", [
     HelpProxy("module", ("cpp", "includeFiles"))
 ])
-def do_dpi(cfg:ConfigContext, wd:Path, vs:str, pipe:Pipeline):
-    etype((cfg,ConfigContext), (wd,Path), (vs,str), (pipe,Pipeline))
+def do_dpi(cfg:ConfigContext, wd:Path, vs:str|None, pipe:Pipeline):
+    etype((cfg,ConfigContext), (wd,Path), (vs,(str,None)), (pipe,Pipeline))
     log = logging.getLogger(LOGNAME)
 
     lst = roadrunner.modules.cpp.includeFiles(cfg.move(), wd)
@@ -367,9 +368,9 @@ def do_sim(cfg:ConfigContext, wd:Path, vs:str, pipe:Pipeline, vars:dict):
     return 0
 
 HelpItem("function", (common.NAME, "do_check"), "run logcheck", [])
-def do_check(wd:Path, pipe:Pipeline):
+def do_check(wd:Path, vs:str|None, pipe:Pipeline):
     with open(wd / "logcheck.py", "w") as fh:
         print(asset(Path('rr/logcheck.py')).source, file=fh)
-    call = Call(wd, 'logcheck', common.PYTHON_ENV)
+    call = Call(wd, 'logcheck', common.PYTHON_ENV, vs)
     call.addArgs(['python3', 'logcheck.py', 'xsim.stdout'])
     pipe.addCall(call)
