@@ -1,0 +1,13 @@
+modules:
+  mod1:
+    sv: mod.sv
+  mod2:
+    sv: mod2.sv
+    inc: =....modules.mod1
+  mod3: +lib/mod3
+
+simulation:
+  tool: Icarus #try "Vivado.sim"
+  top: Bench
+  sv: bench.sv
+  inc: =;modules.mod2
