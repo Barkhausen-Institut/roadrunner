@@ -1,0 +1,1 @@
+verilator --trace --cc tb.sv alu.sv SimClock.sv --top-module tb --exe tb.cpp

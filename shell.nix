@@ -1,4 +1,4 @@
-{ python310, lua, pkg-config, mkShellNoCC }:
+{ python310, lua, pkg-config, mkShell, verilator }:
 let
   pypkg = python-packages: with python-packages; [
     pyyaml
@@ -8,10 +8,11 @@ let
     pytest
   ]; 
   py = python310.withPackages pypkg;
-in mkShellNoCC {
+in mkShell {
   packages = [
     py
     lua
+    verilator
   ];
   #nativeBuildInputs = [
   #    pkg-config
