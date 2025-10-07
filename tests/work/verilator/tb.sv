@@ -8,11 +8,15 @@ module tb;
     logic       outv;
 
 
-    SimClock clk1 (
+    SimClock #(
+        .FREQUENCY(75 * SimHelper::MHZ)
+    ) clk1 (
         .clk_o(clk)
     );
     
-    SimClock clk2 (
+    SimClock #(
+        .FREQUENCY(100 * SimHelper::MHZ)
+    ) clk2 (
         .clk_o(rst)
     );
     
@@ -26,6 +30,15 @@ module tb;
         .out    (out),
         .out_valid  (outv)
     );
+
+    SimTime tme();
+
+    initial begin
+        $dumpfile("waveform.vcd");
+        $dumpvars();
+        tme.waitTime(1 * SimHelper::USEC);
+        $finish();
+    end
 
 
 

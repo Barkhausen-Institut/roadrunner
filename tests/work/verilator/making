@@ -1,1 +1,0 @@
-make -C obj_dir -f Vtb.mk Vtb
