@@ -1,0 +1,21 @@
+sim:
+  tool: Verilator
+  sv: src/sim.sv
+  toplevel: SimTest
+
+simFail:
+  tool: Verilator
+  sv: src/sim_fail.sv
+  toplevel: SimTest
+
+sepCompileUnit:
+  tool: Verilator
+  sv: src/top.sv
+  toplevel: SimTest
+  inc:
+    -
+      sv: src/mod1.sv
+      define: MOD1=1
+    -
+      sv: src/mod2.sv
+      define: MOD2=2
