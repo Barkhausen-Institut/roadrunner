@@ -8,6 +8,7 @@ simFail:
   sv: src/sim_fail.sv
   toplevel: SimTest
 
+#does not work - verilator does not support defines for specific files
 sepCompileUnit:
   tool: Verilator
   sv: src/top.sv
@@ -19,3 +20,26 @@ sepCompileUnit:
     -
       sv: src/mod2.sv
       define: MOD2=2
+
+sim_inc:
+  tool: Verilator
+  sv: src/sim_inc.sv
+  path:
+    - src/values.svh #file
+    - header #directory
+  toplevel: SimTest
+
+dpi:
+  tool: Verilator
+  sv: src/simDpi.sv
+  toplevel: SimTest
+  inc:
+    - =;greeter
+    - =;retval
+    - =;greeter # check if greeter.cc is compiled only once - can only be done by hand
+greeter:
+  dpiModule:
+    c: src/greeter.cc
+retval:
+  dpiModule:
+    c: src/retval.cc
