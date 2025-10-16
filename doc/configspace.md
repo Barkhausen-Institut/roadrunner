@@ -117,8 +117,8 @@ All context variables are available to the Lua interpreter.
 ### Templates
 
 All string values are considered Lua templates, thus can dynamically include values from variables or even more comple expressions.
-RoadRunner uses the etlua templates.
-A simple variable insertion looks like this: `This is a: <? animal =>`.
+RoadRunner uses the [etlua](https://github.com/leafo/etlua) templates.
+A simple variable insertion looks like this: `This is a: <%- animal %>`.
 
 ### Expressions & Program
 
