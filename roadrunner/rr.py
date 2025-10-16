@@ -105,7 +105,7 @@ class Call:
                 print("set -e", file=fh)
             #environment
             for key,var in self.env.items():
-                print(f"{key}={var}", file=fh)
+                print(f"export {key}={var}", file=fh)
             #commands
             for args in self.cmds:
                 print(" \\\n".join(args), file=fh)
