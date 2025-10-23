@@ -43,3 +43,11 @@ greeter:
 retval:
   dpiModule:
     c: src/retval.cc
+
+dpiHeader:
+  tool: Verilator
+  sv: src/simDpi.sv
+  toplevel: SimTest
+  dpiModule:
+    c: src/dpi_header.cc
+    path: header

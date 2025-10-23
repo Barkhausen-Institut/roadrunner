@@ -116,12 +116,12 @@ def do_DpiModules(cfg:ConfigContext, wd:Path, pipe:Pipeline):
             used.append(node.pos())
             for itm in roadrunner.modules.cpp.includeFiles(dpiMod, wd):
                 for path in itm.path:
-                    print(f'-I{path}', file=fh)
+                    print(f'-CFLAGS -I../{path}', file=fh)
                 for lib in itm.libpath:
-                    print(f'-L{lib}', file=fh)
+                    print(f'-CFLAGS -L../{lib}', file=fh)
                 for lib in itm.lib:
-                    print(f'-l{lib}', file=fh)
+                    print(f'-CFLAGS -l{lib}', file=fh)
                 if itm.std is not None:
-                    print(f'-std={itm.std}', file=fh)
+                    print(f'-CFLAGS -std={itm.std}', file=fh)
                 print(*map(str, itm.c), sep='\n', file=fh)
                 print(*map(str, itm.cpp), sep='\n', file=fh)
