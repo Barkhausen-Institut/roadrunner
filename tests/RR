@@ -1,0 +1,5 @@
+all:
+  tool: Flow.pool
+  verilator: =;verilator.all
+
+verilator: +work/verilator

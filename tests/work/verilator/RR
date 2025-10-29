@@ -51,3 +51,10 @@ dpiHeader:
   dpiModule:
     c: src/dpi_header.cc
     path: header
+
+all:
+  tool: Flow.pool
+  sim: =;sim
+  sim_inc: =;sim_inc
+  dpi: =;dpi
+  dpiHeader: =;dpiHeader
