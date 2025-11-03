@@ -21,7 +21,7 @@ import roadrunner.modules.cpp
 NAME = "Verilator"
 HelpItem("tool", NAME, "Verilator Simulator")
 
-DEFAULT_FLAGS = ['VERILATOR']
+DEFAULT_FLAGS = ['VERILATOR', 'DPI']
 
 def cmd_run(cfg:ConfigContext, pipe:Pipeline, vrsn:str) -> int:
     etype((cfg,ConfigContext), (pipe,Pipeline), (vrsn,(str,None)))
@@ -30,6 +30,8 @@ def cmd_run(cfg:ConfigContext, pipe:Pipeline, vrsn:str) -> int:
     flags = cfg.get('.flags', mkList=True, default=[]) + DEFAULT_FLAGS
     fcfg = cfg.move(addFlags=set(flags))
 
+    check = fcfg.get('.check', default=True, isType=bool)
+
     with pipe.inSequence("verilator"):
         do_compile(fcfg, wd, vrsn, pipe)
 
@@ -37,7 +39,8 @@ def cmd_run(cfg:ConfigContext, pipe:Pipeline, vrsn:str) -> int:
         call.addArgs(['obj_dir/VSim'])
         pipe.addCall(call)
 
-        do_check(wd, pipe)
+        if check:
+            do_check(wd, pipe)
 
     return 0
 
