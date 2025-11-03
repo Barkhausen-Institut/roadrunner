@@ -1,0 +1,13 @@
+default:
+    image: nixpkgs/nix-flakes
+
+unittests:
+    stage: test
+    script:
+        - ./script/test_config/install.sh
+        - if [ -d _cache/nar ]; then ARGS="--extra-substituters file://$PWD/_cache?trusted=true"; else ARGS=""; fi
+        - nix run .#test
+        - nix copy --to file://$PWD/_cache --all
+    cache:
+        paths:
+            - _cache/

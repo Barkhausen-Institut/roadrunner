@@ -1,4 +1,4 @@
-{ python310, writeShellApplication, self, unittestArgs ? "discover -s tests" }:
+{ python3, writeShellApplication, self, unittestArgs ? "discover -s tests" }:
 let
     pypkg = python-packages: with python-packages; [
         pyyaml
@@ -7,7 +7,7 @@ let
         typing-extensions
         coverage
     ]; 
-    python = python310.withPackages pypkg;
+    python = python3.withPackages pypkg;
     prog = writeShellApplication {
         name = "rrTest";
         text = ''

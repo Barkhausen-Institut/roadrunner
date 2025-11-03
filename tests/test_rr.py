@@ -47,7 +47,7 @@ class TestCall(unittest.TestCase):
         exp = [
           "#!env/foo.sh\n",
           "set -e\n",
-          "ENV1=path1:path2:path3 \\\n",
+          "export ENV1=path1:path2:path3\n",
           "braak \\\n",
           "arg1 \\\n",
           "arg2 \\\n",

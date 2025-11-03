@@ -7,4 +7,5 @@ rlog
 /result
 /.envrc
 /.direnv
+/.setup
 /dist
