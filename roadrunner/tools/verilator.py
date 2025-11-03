@@ -16,6 +16,7 @@ from roadrunner.help import HelpItem
 from roadrunner.rr import Call, Pipeline, asset
 import roadrunner.modules.verilog
 import roadrunner.modules.cpp
+import roadrunner.modules.files
 
 
 NAME = "Verilator"
@@ -33,6 +34,10 @@ def cmd_run(cfg:ConfigContext, pipe:Pipeline, vrsn:str) -> int:
     check = fcfg.get('.check', default=True, isType=bool)
 
     with pipe.inSequence("verilator"):
+
+        roadrunner.modules.files.share(fcfg, pipe)
+        roadrunner.modules.files.handleFiles(fcfg, wd, pipe)
+
         do_compile(fcfg, wd, vrsn, pipe)
 
         call = Call(wd, 'simulation', NAME, vrsn)

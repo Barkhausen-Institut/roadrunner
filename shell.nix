@@ -1,4 +1,4 @@
-{ python310, lua, pkg-config, mkShell, verilator }:
+{ python3, lua, pkg-config, mkShell, verilator }:
 let
   pypkg = python-packages: with python-packages; [
     pyyaml
@@ -7,7 +7,7 @@ let
     typing-extensions
     pytest
   ]; 
-  py = python310.withPackages pypkg;
+  py = python3.withPackages pypkg;
 in mkShell {
   packages = [
     py
