@@ -1,0 +1,1 @@
+verilator --trace-vcd --cc tb.sv alu.sv SimTime.v SimHelper.sv SimClock.sv --top-module tb --binary -Wno-TIMESCALEMOD 

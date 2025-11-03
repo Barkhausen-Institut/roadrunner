@@ -12,6 +12,7 @@ in mkShellNoCC {
   packages = [
     py
     lua
+    verilator
   ];
   #nativeBuildInputs = [
   #    pkg-config
