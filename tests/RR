@@ -1,5 +1,7 @@
 all:
   tool: Flow.pool
   verilator: =;verilator.all
+  slang: =;slang.all
 
 verilator: +work/verilator
+slang: +work/slang

@@ -10,4 +10,3 @@ class TestTool(unittest.TestCase):
         with run.UnitTestRunner(dir=self.PATH) as tr:
             ret = tr.main(['invoke', 'test'])
             self.assertEqual(ret, 0)
-

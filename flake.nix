@@ -22,7 +22,7 @@
           default = roadrunner;
         };
         apps = {
-          test = pkgs.callPackage ./test.nix { inherit self; };
+          unittest = pkgs.callPackage ./test.nix { inherit self; };
           single = pkgs.callPackage ./test.nix { inherit self; unittestArgs = "tests.test_tool_icarus.TestSim.test_vpi";};
         };
       }

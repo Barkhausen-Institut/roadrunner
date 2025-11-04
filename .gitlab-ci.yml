@@ -1,13 +1,33 @@
 default:
     image: nixpkgs/nix-flakes
+    cache:
+        - key: nix
+          paths:
+            - _cache/
+
+variables:
+    NIX_CONFIG: extra-substituters = file://$PWD/_cache?trusted=true
 
 unittests:
     stage: test
     script:
         - ./script/test_config/install.sh
-        - if [ -d _cache/nar ]; then ARGS="--extra-substituters file://$PWD/_cache?trusted=true"; else ARGS=""; fi
-        - nix run .#test
+        - nix run .#unittest
         - nix copy --to file://$PWD/_cache --all
-    cache:
-        paths:
-            - _cache/
+
+tools:
+    stage: test
+    script:
+        - ./script/test_config/install.sh
+        - cd tests
+        - nix run .. -- all
+        - nix copy --to file://$PWD/_cache --all
+
+#slang:
+#    stage: test
+#    script:
+#        - ./script/test_config/install.sh
+#        - if [ -d _cache/nar ]; then ARGS="--extra-substituters file://$PWD/_cache?trusted=true"; else ARGS=""; fi
+#        - cd tests/work/slang
+#        - nix run .. -- simple
+#        - nix copy --to file://$PWD/_cache --all

@@ -1,4 +1,4 @@
-{ python3, lua, pkg-config, mkShellNoCC }:
+{ python3, lua, pkg-config, mkShellNoCC, verilator }:
 let
   pypkg = python-packages: with python-packages; [
     pyyaml

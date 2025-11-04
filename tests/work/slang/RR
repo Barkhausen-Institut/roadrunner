@@ -33,3 +33,10 @@ includes:
     - src/values.svh #file
     - header #directory
   toplevel: SimTest
+
+all:
+  tool: Flow.pool
+  simple: =;simple
+  flags: =;compileFlags
+  compunit: =;sepCompileUnit
+  includes: =;includes
