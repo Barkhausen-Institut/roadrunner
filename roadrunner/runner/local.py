@@ -9,6 +9,7 @@
 ############
 ############
 
+import threading
 from roadrunner.config import ConfigContext
 import subprocess
 import logging
@@ -16,6 +17,8 @@ import sys
 
 from roadrunner.rr import Pipeline, workdir_name, resultBase
 from roadrunner.tasks import taskPool
+
+localPool = threading.Semaphore(4) #TODO number of processes is hardcoded
 
 def run(cfg:ConfigContext) -> int:
 
@@ -32,11 +35,12 @@ def run(cfg:ConfigContext) -> int:
     log = logging.getLogger("local")
     log.debug(f"running:{args} at:{wd}")
     stdio = None if isRoot else subprocess.DEVNULL
-    cp = subprocess.run(
-        cwd=wd,
-        args=args,
-        stdout=stdio,
-        stderr=stdio
-    )
+    with localPool:
+        cp = subprocess.run(
+            cwd=wd,
+            args=args,
+            stdout=stdio,
+            stderr=stdio
+        )
 
     return cp.returncode
