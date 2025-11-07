@@ -12,7 +12,7 @@
 from pathlib import Path
 from roadrunner.config import ConfigContext, PathNotExist
 from roadrunner.fn import etype, relpath
-from roadrunner.help import HelpItem
+from roadrunner.help import HelpItem, HelpOption, HelpProxy
 from roadrunner.rr import Call, Pipeline, asset
 import roadrunner.modules.verilog
 import roadrunner.modules.cpp
@@ -24,6 +24,13 @@ HelpItem("tool", NAME, "Verilator Simulator")
 
 DEFAULT_FLAGS = ['VERILATOR', 'DPI']
 
+HelpItem("command", (NAME, "run"), "run Verilator lint check", [
+    HelpProxy("function", (NAME, "do_compile")),
+    HelpProxy("module", ("files", "share")),
+    HelpProxy("module", ("files", "handleFiles")),
+    HelpOption("attribute", "check", "bool", "true", "run the logchecker"),
+    HelpProxy("function", (NAME, "do_check"))
+])
 def cmd_run(cfg:ConfigContext, pipe:Pipeline, vrsn:str) -> int:
     etype((cfg,ConfigContext), (pipe,Pipeline), (vrsn,(str,None)))
     wd = pipe.initWorkDir()
@@ -48,6 +55,23 @@ def cmd_run(cfg:ConfigContext, pipe:Pipeline, vrsn:str) -> int:
             do_check(wd, pipe)
 
     return 0
+HelpItem("command", (NAME, "lint"), "run Verilator lint check", [
+    HelpProxy("function", (NAME, "do_compile")),
+    HelpProxy("module", ("files", "share")),
+    HelpProxy("module", ("files", "handleFiles"))
+])
+def cmd_lint(cfg:ConfigContext, pipe:Pipeline, vrsn:str) -> int:
+    etype((cfg,ConfigContext), (pipe,Pipeline), (vrsn,(str,None)))
+    wd = pipe.initWorkDir()
+
+    with pipe.inSequence("lint"):
+
+        roadrunner.modules.files.share(cfg, pipe)
+        roadrunner.modules.files.handleFiles(cfg, wd, pipe)
+
+        do_compile(cfg, wd, vrsn, pipe, lint=True)
+
+    return 0
 
 HelpItem("function", (NAME, "do_check"), "run logcheck", [])
 def do_check(wd:Path, pipe:Pipeline):
@@ -57,8 +81,8 @@ def do_check(wd:Path, pipe:Pipeline):
     call.addArgs(['python3', 'logcheck.py', 'simulation.stdout'])
     pipe.addCall(call)
 
-def do_compile(cfg:ConfigContext, wd:Path, vrsn:str, pipe:Pipeline) -> int:
-    etype((cfg,ConfigContext), (wd,Path), (vrsn,(str,None)), (pipe,Pipeline))
+def do_compile(cfg:ConfigContext, wd:Path, vrsn:str, pipe:Pipeline, lint:bool=False) -> int:
+    etype((cfg,ConfigContext), (wd,Path), (vrsn,(str,None)), (pipe,Pipeline), (lint,bool))
 
     toplevel = cfg.get('.toplevel', isType=str)
 
@@ -69,9 +93,14 @@ def do_compile(cfg:ConfigContext, wd:Path, vrsn:str, pipe:Pipeline) -> int:
 
 
     call = Call(wd, 'verilator', NAME, vrsn)
-    call.addArgs(['verilator', '--cc', '--binary'])
+    call.addArgs(['verilator', '--cc'])
+    if lint:
+        call.addArgs(['--lint-only'])
+    else:
+        call.addArgs(['--binary'])
     # TODO this should be loaded from attributes
     call.addArgs(['--trace'])
+    call.addArgs(['--timing'])
     call.addArgs(['-Wno-TIMESCALEMOD'])
     call.addArgs(['--top-module', toplevel])
     call.addArgs(['-o', 'VSim'])
@@ -79,7 +108,6 @@ def do_compile(cfg:ConfigContext, wd:Path, vrsn:str, pipe:Pipeline) -> int:
     call.addArgs(['-f', 'dpiModules.cmd'])
 
     pipe.addCall(call)
-
 
     return 0
 

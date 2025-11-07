@@ -52,9 +52,15 @@ dpiHeader:
     c: src/dpi_header.cc
     path: header
 
+lint:
+  tool: Verilator.lint
+  sv: src/sim.sv
+  toplevel: SimTest
+
 all:
   tool: Flow.pool
   sim: =;sim
   sim_inc: =;sim_inc
   dpi: =;dpi
   dpiHeader: =;dpiHeader
+  lint: =;lint
