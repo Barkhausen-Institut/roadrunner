@@ -12,7 +12,7 @@
 from pathlib import Path
 from roadrunner.config import ConfigContext, PathNotExist
 from roadrunner.fn import etype, relpath
-from roadrunner.help import HelpItem, HelpOption, HelpProxy
+from roadrunner.help import HelpItem, HelpOption, HelpProxy, HelpArg
 from roadrunner.rr import Call, Pipeline, asset
 import roadrunner.modules.verilog
 import roadrunner.modules.cpp
