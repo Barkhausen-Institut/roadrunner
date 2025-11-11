@@ -557,7 +557,10 @@ class ConfigCond(ConfigNode):
             res = lua.run(condition)
             if res:
                 if self.mode == 'list':
-                    accu.setChild('#', node.clone(), None)
+                    if isinstance(node, ConfigList):
+                        accu.merge(node, None)
+                    else:
+                        accu.setChild('#', node.clone(), None)
                 elif self.mode == 'merge':
                     if accu is None:
                         accu = node.clone()

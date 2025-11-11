@@ -543,6 +543,17 @@ class TestConfigCond(TestConfigNode):
         self.assertEqual(cnf.get(':test2'), ["kea", "pigeon", "sparrow"])
         self.assertEqual(cnf.get(':thing2'), [])
 
+    def test_condition_list_concat(self):
+        """testing having lists in a condition node in list mode"""
+        d1 = {
+            "thing": {
+                '/#1': ["kea", "parrot"],
+                '/#2': "pigeon",
+            }
+        }
+        cnf = config.ConfigContext(config.makeConfigVal(d1))
+        self.assertEqual(cnf.get(':thing'), ["kea", "parrot", "pigeon"])
+
     def test_merge_cond(self):
         d1 = {
             'monkeys': [
