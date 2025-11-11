@@ -512,7 +512,9 @@ class ConfigCond(ConfigNode):
         #
         if isinstance(raw, ConfigCond):
             for cond,node in raw.parts:
-                self.addPart(cond, node.clone())
+                cnode = node.clone()
+                cnode.setParent(self.parent, self.key)
+                self.addPart(cond, cnode)
             self.mode = raw.mode
         else:
             oris = raw['__origins__'] if '__origins__' in raw else {} 
@@ -544,6 +546,7 @@ class ConfigCond(ConfigNode):
         assert self.mode is not None
 
     def addPart(self, condition:LuaSnippet, node:ConfigNode):
+        node.setParent(self.parent, self.key)
         self.parts.append((condition, node))
 
     def delegate(self, env:ConfigEnv) -> tuple[ConfigEnv, ConfigNode]:
@@ -556,27 +559,33 @@ class ConfigCond(ConfigNode):
         for condition, node in self.parts:
             res = lua.run(condition)
             if res:
+                ncfg = ConfigContext(node, env=env).real()
                 if self.mode == 'list':
-                    if isinstance(node, ConfigList):
-                        accu.merge(node, None)
+                    if ncfg.isList():
+                        accu.merge(ncfg.node, None)
                     else:
-                        accu.setChild('#', node.clone(), None)
+                        accu.setChild('#', ncfg.node.clone(), None)
                 elif self.mode == 'merge':
                     if accu is None:
-                        accu = node.clone()
+                        accu = ncfg.node.clone()
                     else:
                         try:
-                            accu.merge(node, env)
+                            accu.merge(ncfg.node, env)
                         except TypeError:
                             raise BadValue("ConfigCondition resolved to incompatible types", env, self)
                 elif self.mode == 'single':
-                    accu = node.clone()
+                    accu = ncfg.node.clone()
                     break
         if accu is None:
             raise BadValue("ConfigCondition resolved to an empty value", env, self)
         else:
             accu.setParent(self.parent, self.key)
         return env, accu
+
+    def setParent(self, node:ConfigNode, key:str):
+        super().setParent(node, key)
+        for _,part in self.parts:
+            part.setParent(node, key)
 
     def export(self) -> dict:
         return {"/" + cond.source:node.export() for cond,node in self.parts}  

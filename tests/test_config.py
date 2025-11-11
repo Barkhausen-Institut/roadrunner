@@ -549,10 +549,13 @@ class TestConfigCond(TestConfigNode):
             "thing": {
                 '/#1': ["kea", "parrot"],
                 '/#2': "pigeon",
-            }
+                '/#3': "=:list"
+            },
+            "list": ["owl", "dove"]
         }
         cnf = config.ConfigContext(config.makeConfigVal(d1))
-        self.assertEqual(cnf.get(':thing'), ["kea", "parrot", "pigeon"])
+        self.assertEqual(cnf.get(':list'), ["owl", "dove"])
+        self.assertEqual(cnf.get(':thing'), ["kea", "parrot", "pigeon", "owl", "dove"])
 
     def test_merge_cond(self):
         d1 = {
