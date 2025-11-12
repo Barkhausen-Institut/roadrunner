@@ -35,16 +35,16 @@ GENUS_UNIT_DIR = "units/{unit}/rtl2gds/genus"
 GENUS_FILELIST_FILE = "addons/{unit}.design.tcl"
 GENUS_DEFINES_FILE = "defines.tcl"
 
-def cmd_genus(cfg:ConfigContext, pipe:Pipeline):
+def cmd_genus(cfg:ConfigContext, pipe:Pipeline, version:str) -> int:
     log = logging.getLogger("ICPro")
 
     wd = pipe.initWorkDir()
     roadrunner.modules.files.share(cfg, pipe)
 
     flags = cfg.get('.flags', mkList=True, default=[]) + GENUS_FLAGS_DEFAULT
-    log.info(f"flags:{flags}")
+    log.debug(f"flags:{flags}")
     fcfg = cfg.move(addFlags=set(flags))
-    pathMap = fcfg.get(".pathMap")
+    #pathMap = fcfg.get(".pathMap")
     vFiles = roadrunner.modules.verilog.includeFiles(fcfg, wd)
     
     files_sv = export_files(wd, vFiles, 'sv')
@@ -80,7 +80,7 @@ def cmd_genus(cfg:ConfigContext, pipe:Pipeline):
 
     #write defines into a tcl file
     with open(wd / 'defines.tcl', "w") as fh:
-        print("%I dont't know where to put the global defines for a genus synthesis run", file=fh)
+        print("#I dont't know where to put the global defines for a genus synthesis run", file=fh)
         defs = [x.strip() for x in set(defines)]
         print("set DEFINES = {", file=fh, end="")
         print(" ".join(defs), file=fh, end="")
@@ -109,7 +109,7 @@ def cmd_genus(cfg:ConfigContext, pipe:Pipeline):
     call = rr.Call(wd, 'exportFiles', 'Bash')
     call.addArgs(['sh', 'export.sh'])
 
-    pipe.runCall(call)
+    pipe.addCall(call)
     return 0
 
 

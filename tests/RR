@@ -2,6 +2,8 @@ all:
   tool: Flow.pool
   verilator: =;verilator.all
   slang: =;slang.all
+  icpro: =;icpro.all
 
 verilator: +work/verilator
 slang: +work/slang
+icpro: +work/icpro

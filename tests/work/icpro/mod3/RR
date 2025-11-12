@@ -1,0 +1,7 @@
+sv:
+  - m.sv
+  - sub1/u.sv
+  - sub2/u.sv
+path:
+ - sub1/sh.svh
+ - .

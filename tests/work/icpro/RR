@@ -1,0 +1,43 @@
+mod1:
+  sv: mod1/m1.sv
+  inc:
+    /default:
+      - =;mod2
+      - =;mod3
+    /RACYICS:
+      - =;lib1
+
+mod2:
+  sv: mod2/m.sv
+  path: mod2/includes
+  define: SOMETHING
+
+mod3: +mod3
+
+pymodules: +pymod
+
+lib1:
+  _static: resources/lib1
+  sv:
+    - file1.sv
+    - file2.sv
+  define: SOMETHING
+
+synth:
+  tool: ICPro.genus
+  inc: =;mod1
+  #pathMap: =:pathMap
+  unit: mod1
+  
+
+all: =;synth
+  
+
+#pathMap:
+#  mod2: mod2
+#  mod3: mod3
+#  mod3_sub1: sub1
+#  mod3_sub2: sub2
+#  mod1: mod
+
+  
