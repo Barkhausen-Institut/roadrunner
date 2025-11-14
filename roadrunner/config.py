@@ -995,6 +995,9 @@ class Location():
 
     def __eq__(self, other: object) -> bool:
         return self.path == other.path and self.static == other.static
+    
+    def __hash__(self) -> int:
+        return hash((self.path, self.static))
 
 class Origin():
     def __init__(self, line, column, f=None):

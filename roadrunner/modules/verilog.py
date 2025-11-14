@@ -13,7 +13,7 @@ import logging
 from pathlib import Path
 from roadrunner.fn import etype
 from roadrunner.help import HelpItem, HelpOption
-from roadrunner.config import ConfigContext, ConfigPath
+from roadrunner.config import ConfigContext, ConfigPath, Location
 from dataclasses import dataclass
 from roadrunner.rr import renderTemplate, workdir_import_list
 
@@ -49,6 +49,7 @@ class FileItem:
     defines:list[str]
     path:list[Path]
     static:bool
+    imports: dict[tuple[Location,Path], Path]
     
 HelpItem("module", ("verilog", "includeFiles"), "import verilog files", [
     HelpOption("attribute", "v", "list[file]", None, "list of verilog files"),
@@ -61,22 +62,30 @@ def includeFiles(cfg:ConfigContext, wd:Path) -> list[FileItem]:
     log = logging.getLogger(LOGNAME)
     files = []
     for itm in cfg.move(addFlags=CONFIG_FLAGS).travers():
-        log.debug(f"verilog import from node:{itm.node} pos:{itm.pos()} - loc:{itm.location()!r}")
-        v = workdir_import_list(wd, itm.get(".v", mkList=True, isOsPath=True, default=[]))
-        sv = workdir_import_list(wd, itm.get(".sv", mkList=True, isOsPath=True, default=[]))
-        path = workdir_import_list(wd, itm.get(".path", mkList=True, isOsPath=True, default=[]),
-                                    baseDir=Path("include"))
-        incdirset = set()
-        for i in path:
-            if i.is_dir() or (wd / i).is_dir():
-                incdirset.add(i)
-            else:
-                incdirset.add(i.parent)
-        incdirs = list(incdirset)
-        defines = itm.get(".define", mkList=True, default=[])
-        static = itm.location().static
-        if all(x == [] for x in [v, sv, incdirs, defines]):
-            continue
-        files.append(FileItem(itm.pos(), v, sv, defines, incdirs, static))
+        files.append(gather(itm, wd))
 
     return files
+
+def gather(cfg:ConfigContext, wd:Path) -> FileItem:
+    etype((cfg,ConfigContext), (wd,Path))
+    vSrc = cfg.get(".v", mkList=True, isOsPath=True, default=[])
+    svSrc = cfg.get(".sv", mkList=True, isOsPath=True, default=[])
+    pathSrc = cfg.get(".path", mkList=True, isOsPath=True, default=[])
+    imports = {}
+    v = workdir_import_list(wd, vSrc)
+    for dst,src in zip(v, vSrc):
+        imports[src] = dst
+    sv = workdir_import_list(wd, svSrc)
+    for dst,src in zip(sv, svSrc):
+        imports[src] = dst
+    path = workdir_import_list(wd, pathSrc, baseDir=Path("include"))
+    incdirset = set()
+    for i in path:
+        if i.is_dir() or (wd / i).is_dir():
+            incdirset.add(i)
+        else:
+            incdirset.add(i.parent)
+    incdirs = list(incdirset)
+    defines = cfg.get(".define", mkList=True, default=[])
+    static = cfg.location().static
+    return FileItem(cfg.pos(), v, sv, defines, incdirs, static, imports)

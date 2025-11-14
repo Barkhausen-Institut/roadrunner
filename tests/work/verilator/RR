@@ -3,6 +3,26 @@ sim:
   sv: src/sim.sv
   toplevel: SimTest
 
+simTrace:
+  tool: sequence
+  veri:
+    tool: Verilator
+    sv: src/sim.sv
+    toplevel: SimTest
+    trace: vcd
+    expose: waves.vcd
+  check:
+    tool: Shell
+    discover: waves.vcd
+    script: |
+      if [ -f waves.vcd ]; then
+        echo "waves file found"
+        exit 0
+      else
+        echo "waves file NOT found"
+        exit 1
+      fi
+
 simFail:
   tool: Verilator
   sv: src/sim_fail.sv
@@ -52,9 +72,26 @@ dpiHeader:
     c: src/dpi_header.cc
     path: header
 
+lint:
+  tool: Verilator.lint
+  sv: src/sim.sv
+  toplevel: SimTest
+
+waiver:
+  tool: Verilator.lint
+  sv: src/WarningTest.sv
+  toplevel: WarningTest
+  vWaiver:
+    rule: UNOPTFLAT
+    file: src/WarningTest.sv
+    lines: 11-15
+
 all:
   tool: Flow.pool
   sim: =;sim
   sim_inc: =;sim_inc
   dpi: =;dpi
   dpiHeader: =;dpiHeader
+  lint: =;lint
+  waiver: =;waiver
+  simTrace: =;simTrace
